@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jérôme Rigoni — Portfolio</title>
+  <meta name="description" content="Portfolio de Jérôme Rigoni — étudiant en informatique, spécialisation IA & Data. En recherche d'alternance.">
+  <meta name="theme-color" content="#050505">
+  <meta name="author" content="Jérôme Rigoni">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jérôme Rigoni — Portfolio">
+  <meta property="og:description" content="Étudiant en informatique — spécialisation IA & Data. En recherche d'alternance.">
+  <meta property="og:url" content="https://jeromerigoni.github.io">
+  <meta property="og:image" content="https://jeromerigoni.github.io/assets/img/og-card.png">
+  <meta property="og:locale" content="fr_FR">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jérôme Rigoni — Portfolio">
+  <meta name="twitter:description" content="Étudiant en informatique — spécialisation IA & Data. En recherche d'alternance.">
+  <meta name="twitter:image" content="https://jeromerigoni.github.io/assets/img/og-card.png">
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#top" data-i18n="a11y.skip">Aller au contenu principal</a>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a href="#" class="logo" data-i18n-aria-label="aria.home" aria-label="Accueil">
+      <span class="logo-bracket">[</span>JR<span class="logo-bracket">]</span>
+    </a>
+    <nav class="nav" data-i18n-aria-label="aria.nav" aria-label="Navigation principale">
+      <a href="#projects" data-i18n="nav.projects">// projets</a>
+      <a href="#stack" data-i18n="nav.stack">// stack</a>
+      <a href="#parcours" data-i18n="nav.about">// parcours</a>
+      <a href="#contact" data-i18n="nav.contact">// contact</a>
+    </nav>
+    <button class="lang-toggle" type="button" data-i18n-aria-label="aria.lang" aria-label="Changer de langue">
+      <span class="lang-active">FR</span>
+      <span class="lang-sep">/</span>
+      <span class="lang-inactive">EN</span>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-content">
+        <div class="hero-meta">
+          <span class="tag" data-i18n="hero.tag">// 00 — hello</span>
+        </div>
+        <h1 class="hero-name" data-glitch>
+          <span class="line">JÉRÔME</span>
+          <span class="line">RIGONI</span>
+        </h1>
+        <p class="hero-tagline" data-i18n-html="hero.tagline">
+          Étudiant en informatique — spécialisation <span class="accent">IA &amp; Data</span>.<br>
+          En recherche d'alternance.
+        </p>
+        <div class="hero-status">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="scramble" data-text="status: open to work" data-i18n="hero.status">status: open to work</span>
+        </div>
+      </div>
+      <div class="hero-monogram" aria-hidden="true">
+        <svg viewBox="0 0 200 200" class="monogram" xmlns="http://www.w3.org/2000/svg">
+          <text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" class="mono-text">JR</text>
+        </svg>
+        <div class="monogram-frame"></div>
+        <div class="monogram-corners">
+          <span class="corner tl"></span>
+          <span class="corner tr"></span>
+          <span class="corner bl"></span>
+          <span class="corner br"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section projects-section" id="projects">
+  <div class="section-header">
+    <span class="section-tag" data-i18n="projects.tag">// 01 — projets</span>
+    <h2 class="section-title" data-i18n="projects.title">Projets sélectionnés</h2>
+    <p class="section-desc" data-i18n="projects.desc">Une sélection autour de l'IA, du machine learning et de l'apprentissage par renforcement.</p>
+  </div>
+
+  <div class="projects-grid">
+
+    <article class="project-card">
+      <div class="project-num" aria-hidden="true">01</div>
+      <span class="project-status status-done" data-i18n="projects.status.done">terminé</span>
+      <h3 class="project-title">Snake IA</h3>
+      <p class="project-subtitle" data-i18n="projects.snake.subtitle">Apprentissage par renforcement / Q-Learning</p>
+      <p class="project-desc" data-i18n="projects.snake.desc">Agent autonome qui apprend à jouer à Snake via Q-Learning. Encoding d'état à 11 features, stratégie epsilon-greedy, decay progressif d'exploration.</p>
+      <ul class="project-tags">
+        <li>Python</li>
+        <li>Q-Learning</li>
+        <li>NumPy</li>
+        <li>Pygame</li>
+        <li>Matplotlib</li>
+      </ul>
+      <div class="project-links">
+        <a href="snake.html" class="project-link" data-i18n="projects.cta.study">étude de cas →</a>
+        <a href="https://github.com/JeromeRigoni" class="project-link muted" target="_blank" rel="noopener" data-i18n="projects.cta.code">code →</a>
+      </div>
+    </article>
+
+    <article class="project-card wip">
+      <div class="project-num" aria-hidden="true">02</div>
+      <span class="project-status status-wip" data-i18n="projects.status.wip">en cours</span>
+      <h3 class="project-title" data-i18n="projects.p2.title">Project // 02</h3>
+      <p class="project-subtitle" data-i18n="projects.p2.subtitle">— à définir —</p>
+      <p class="project-desc" data-i18n="projects.p2.desc">Projet IA à venir. Concept et stack en cours de définition.</p>
+      <ul class="project-tags placeholder">
+        <li>tbd</li>
+      </ul>
+      <div class="project-links">
+        <span class="project-link disabled" data-i18n="projects.cta.soon">bientôt</span>
+      </div>
+    </article>
+
+    <article class="project-card wip">
+      <div class="project-num" aria-hidden="true">03</div>
+      <span class="project-status status-wip" data-i18n="projects.status.wip">en cours</span>
+      <h3 class="project-title" data-i18n="projects.p3.title">Project // 03</h3>
+      <p class="project-subtitle" data-i18n="projects.p3.subtitle">— à définir —</p>
+      <p class="project-desc" data-i18n="projects.p3.desc">Projet IA à venir. Concept et stack en cours de définition.</p>
+      <ul class="project-tags placeholder">
+        <li>tbd</li>
+      </ul>
+      <div class="project-links">
+        <span class="project-link disabled" data-i18n="projects.cta.soon">bientôt</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="section stack-section" id="stack">
+  <div class="section-header">
+    <span class="section-tag" data-i18n="stack.tag">// 02 — stack</span>
+    <h2 class="section-title" data-i18n="stack.title">Stack technique</h2>
+    <p class="section-desc" data-i18n="stack.desc">Outils et technos avec lesquels je travaille, organisés par domaine.</p>
+  </div>
+
+  <div class="stack-list">
+
+    <div class="stack-row">
+      <div class="stack-label">
+        <span class="stack-num" aria-hidden="true">[01]</span>
+        <h3 data-i18n="stack.cat.langages">Langages</h3>
+      </div>
+      <ul class="stack-items">
+        <li>JavaScript</li>
+        <li>Python</li>
+        <li>PHP 8</li>
+        <li>Java</li>
+        <li>Kotlin</li>
+        <li>C</li>
+        <li>Bash</li>
+      </ul>
+    </div>
+
+    <div class="stack-row">
+      <div class="stack-label">
+        <span class="stack-num" aria-hidden="true">[02]</span>
+        <h3 data-i18n="stack.cat.frontend">Front-end</h3>
+      </div>
+      <ul class="stack-items">
+        <li>HTML</li>
+        <li>CSS</li>
+        <li>Vue.js</li>
+        <li>Flutter</li>
+      </ul>
+    </div>
+
+    <div class="stack-row">
+      <div class="stack-label">
+        <span class="stack-num" aria-hidden="true">[03]</span>
+        <h3 data-i18n="stack.cat.backend">Back-end &amp; API</h3>
+      </div>
+      <ul class="stack-items">
+        <li>Node.js</li>
+        <li>MySQL</li>
+        <li>API REST</li>
+        <li>JSON</li>
+      </ul>
+    </div>
+
+    <div class="stack-row">
+      <div class="stack-label">
+        <span class="stack-num" aria-hidden="true">[04]</span>
+        <h3 data-i18n="stack.cat.devops">DevOps &amp; Virtu</h3>
+      </div>
+      <ul class="stack-items">
+        <li>Docker</li>
+        <li>Git</li>
+        <li>GitHub</li>
+        <li>GitLab</li>
+        <li>VMware</li>
+        <li>VirtualBox</li>
+      </ul>
+    </div>
+
+    <div class="stack-row">
+      <div class="stack-label">
+        <span class="stack-num" aria-hidden="true">[05]</span>
+        <h3 data-i18n="stack.cat.networks">Réseaux</h3>
+      </div>
+      <ul class="stack-items">
+        <li>Cisco Packet Tracer</li>
+        <li>VLAN</li>
+        <li>Routage</li>
+        <li>DHCP</li>
+        <li>DNS</li>
+        <li>EVE-NG</li>
+      </ul>
+    </div>
+
+    <div class="stack-row">
+      <div class="stack-label">
+        <span class="stack-num" aria-hidden="true">[06]</span>
+        <h3 data-i18n="stack.cat.tools">Outils</h3>
+      </div>
+      <ul class="stack-items">
+        <li>Figma</li>
+        <li>Notion</li>
+        <li>Termius</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+<section class="section journey-section" id="parcours">
+  <div class="section-header">
+    <span class="section-tag" data-i18n="journey.tag">// 03 — parcours</span>
+    <h2 class="section-title" data-i18n="journey.title">Parcours</h2>
+    <p class="section-desc" data-i18n="journey.desc">Formations, stage et alternance.</p>
+  </div>
+
+  <ol class="journey-list">
+
+    <li class="journey-item">
+      <div class="journey-date">
+        <span class="journey-year" data-i18n="journey.esgi.year">2024 — en cours</span>
+        <span class="journey-type type-formation" data-i18n="journey.type.formation">formation</span>
+      </div>
+      <div class="journey-card">
+        <h3 class="journey-title">ESGI</h3>
+        <p class="journey-role" data-i18n-html="journey.esgi.role">Bachelor Informatique — spécialisation IA &amp; Data</p>
+        <p class="journey-place" data-i18n="journey.esgi.place">Paris · Promo 2027</p>
+        <p class="journey-desc" data-i18n="journey.esgi.desc">Spécialisation orientée machine learning, data engineering et statistiques. Projets autour de l'IA appliquée.</p>
+      </div>
+    </li>
+
+    <li class="journey-item">
+      <div class="journey-date">
+        <span class="journey-year">2022 — 2023</span>
+        <span class="journey-type type-alternance" data-i18n="journey.type.alternance">alternance</span>
+      </div>
+      <div class="journey-card">
+        <h3 class="journey-title">Coyali</h3>
+        <p class="journey-role" data-i18n="journey.coyali.role">Développeur mobile — alternance</p>
+        <p class="journey-place" data-i18n-html="journey.coyali.place">Flutter · iOS &amp; Android</p>
+        <p class="journey-desc" data-i18n="journey.coyali.desc">Développement de fonctionnalités sur une app mobile cross-platform. Intégration d'APIs REST, gestion d'état et UI custom.</p>
+      </div>
+    </li>
+
+    <li class="journey-item">
+      <div class="journey-date">
+        <span class="journey-year">2021 — 2023</span>
+        <span class="journey-type type-formation" data-i18n="journey.type.formation">formation</span>
+      </div>
+      <div class="journey-card">
+        <h3 class="journey-title">ETNA</h3>
+        <p class="journey-role" data-i18n="journey.etna.role">Bac+2 Informatique</p>
+        <p class="journey-place" data-i18n="journey.etna.place">Paris</p>
+        <p class="journey-desc" data-i18n="journey.etna.desc">Formation par projet : dev web, mobile, base de données, architecture logicielle. Pédagogie learning-by-doing.</p>
+      </div>
+    </li>
+
+    <li class="journey-item">
+      <div class="journey-date">
+        <span class="journey-year">2019 — 2020</span>
+        <span class="journey-type type-stage" data-i18n="journey.type.stage">stage</span>
+      </div>
+      <div class="journey-card">
+        <h3 class="journey-title">IFP Énergies nouvelles</h3>
+        <p class="journey-role" data-i18n="journey.ifp.role">Stage électricien — 8 mois</p>
+        <p class="journey-place" data-i18n="journey.ifp.place">Rueil-Malmaison</p>
+        <p class="journey-desc" data-i18n="journey.ifp.desc">Maintenance et installation électrique sur un centre de recherche. Lecture de schémas, raccordements, tests et mise en sécurité.</p>
+      </div>
+    </li>
+
+    <li class="journey-item">
+      <div class="journey-date">
+        <span class="journey-year">2017 — 2020</span>
+        <span class="journey-type type-formation" data-i18n="journey.type.formation">formation</span>
+      </div>
+      <div class="journey-card">
+        <h3 class="journey-title">Lycée La Salle Passy-Buzenval</h3>
+        <p class="journey-role" data-i18n="journey.lycee.role">Bac Pro MELEC</p>
+        <p class="journey-place" data-i18n="journey.lycee.place">Rueil-Malmaison</p>
+        <p class="journey-desc" data-i18n="journey.lycee.desc">Bac Pro Métiers de l'Électricité et de ses Environnements Connectés. Bases solides en logique électrique et systèmes embarqués.</p>
+      </div>
+    </li>
+
+  </ol>
+</section>
+<<section class="section contact-section" id="contact">
+  <div class="section-header">
+    <span class="section-tag" data-i18n="contact.tag">// 04 — contact</span>
+    <h2 class="section-title" data-i18n="contact.title">Contact</h2>
+  </div>
+
+  <div class="contact-wrap">
+
+    <div class="contact-line">
+      <span class="contact-prompt" aria-hidden="true">$</span>
+      <button class="copy-btn" type="button" data-copy="blackdroby@gmail.com" data-i18n-aria-label="contact.aria.copy.email" aria-label="Copier l'email">
+        <span class="copy-val">blackdroby@gmail.com</span>
+        <span class="copy-feedback" data-i18n="contact.copy.idle">[clic pour copier]</span>
+      </button>
+    </div>
+
+    <div class="contact-line">
+      <span class="contact-prompt" aria-hidden="true">$</span>
+      <button class="copy-btn" type="button" data-copy="06 82 88 01 65" data-i18n-aria-label="contact.aria.copy.phone" aria-label="Copier le numéro">
+        <span class="copy-val">06 82 88 01 65</span>
+        <span class="copy-feedback" data-i18n="contact.copy.idle">[clic pour copier]</span>
+      </button>
+    </div>
+
+    <div class="contact-actions">
+      <a href="assets/cv/Rigoni-Jerome-CV.pdf" class="btn btn-primary" download>
+        <span data-i18n="contact.cta.cv">Télécharger le CV</span>
+        <span class="btn-arrow" aria-hidden="true">↓</span>
+      </a>
+    </div>
+
+    <div class="contact-socials">
+      <a href="https://www.linkedin.com/in/j%C3%A9r%C3%B4me-rigoni/" class="social-link" target="_blank" rel="noopener">
+        <span class="social-key">LinkedIn</span>
+        <span class="social-val">→ /in/jérôme-rigoni</span>
+      </a>
+      <a href="https://github.com/JeromeRigoni" class="social-link" target="_blank" rel="noopener">
+        <span class="social-key">GitHub</span>
+        <span class="social-val">→ /JeromeRigoni</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 Jérôme Rigoni</span>
+    <span class="footer-muted">v0.1 — wip</span>
+  </footer>
+
+  <script src="assets/js/i18n.js" defer></script>
+  <script src="assets/js/glitch.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake IA — Étude de cas · Jérôme Rigoni</title>
+  <meta name="description" content="Étude de cas Snake IA : agent autonome entraîné par Q-Learning. Encoding d'état à 11 features, epsilon-greedy, décroissance progressive de l'exploration.">
+  <meta name="theme-color" content="#050505">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Snake IA — Étude de cas">
+  <meta property="og:description" content="Agent autonome entraîné par Q-Learning à jouer à Snake.">
+  <meta property="og:url" content="https://jeromerigoni.github.io/snake.html">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#case-top" data-i18n="a11y.skip">Aller au contenu principal</a>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a href="index.html" class="logo" data-i18n-aria-label="aria.home" aria-label="Accueil">
+      <span class="logo-bracket">[</span>JR<span class="logo-bracket">]</span>
+    </a>
+    <nav class="nav" data-i18n-aria-label="aria.nav" aria-label="Navigation principale">
+      <a href="index.html#projects" data-i18n="case.nav.back">// ← projets</a>
+      <a href="#case-state" data-i18n="case.nav.state">// état</a>
+      <a href="#case-algo" data-i18n="case.nav.algo">// algo</a>
+      <a href="#case-results" data-i18n="case.nav.results">// résultats</a>
+    </nav>
+    <button class="lang-toggle" type="button" data-i18n-aria-label="aria.lang" aria-label="Changer de langue">
+      <span class="lang-active">FR</span>
+      <span class="lang-sep">/</span>
+      <span class="lang-inactive">EN</span>
+    </button>
+  </header>
+
+  <main>
+
+    <section class="case-hero" id="case-top">
+      <span class="section-tag" data-i18n="case.tag">// étude de cas — 01</span>
+      <h1 class="case-title">Snake IA</h1>
+      <p class="case-subtitle" data-i18n="case.subtitle">Apprentissage par renforcement · Q-Learning tabulaire</p>
+      <div class="case-meta">
+        <span><strong data-i18n="case.meta.lang">Langage</strong> Python 3.10</span>
+        <span><strong data-i18n="case.meta.libs">Libs</strong> NumPy · Pygame · Matplotlib</span>
+        <span><strong data-i18n="case.meta.repo">Repo</strong> <a href="https://github.com/JeromeRigoni/snake-ia-rl" target="_blank" rel="noopener">github.com/JeromeRigoni/snake-ia-rl</a></span>
+      </div>
+    </section>
+
+    <section class="section case-section" id="case-tldr">
+      <div class="tldr">
+        <span class="tldr-label" data-i18n="case.tldr.label">TL;DR</span>
+        <p data-i18n="case.tldr.text">Un agent qui ne sait rien au départ apprend à jouer à Snake. Aucune règle codée à la main : il observe l'état (11 features booléens), choisit parmi 3 actions, reçoit une récompense, et met à jour sa Q-table via Bellman. Après 50 000 épisodes, meilleur score <strong>65</strong> et moyenne stable autour de <strong>24</strong> pommes mangées.</p>
+      </div>
+    </section>
+
+    <section class="section case-section" id="case-problem">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="case.problem.tag">// 01 — le problème</span>
+        <h2 class="section-title" data-i18n="case.problem.title">Pourquoi le renforcement ?</h2>
+      </div>
+      <p class="case-text" data-i18n="case.problem.p1">Snake est un cas d'école pour le RL : règles simples, espace d'états gérable, feedback immédiat (manger une pomme, mourir contre un mur). Pas besoin d'un dataset labelisé — l'agent génère ses propres données en jouant.</p>
+      <p class="case-text" data-i18n="case.problem.p2">L'objectif n'est pas de coder un Snake qui gagne, mais de coder un agent qui apprend tout seul à gagner. Nuance fondamentale.</p>
+    </section>
+
+    <section class="section case-section" id="case-state">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="case.state.tag">// 02 — état</span>
+        <h2 class="section-title" data-i18n="case.state.title">Encoding d'état (11 features)</h2>
+        <p class="section-desc" data-i18n="case.state.desc">Plutôt que de donner la grille brute (trop d'états), je résume l'observation en 11 booléens. Ça permet une Q-table compacte et un apprentissage rapide.</p>
+      </div>
+      <ol class="feature-list">
+        <li><span class="feat-num">01</span><span class="feat-name" data-i18n="case.state.f1">danger droit devant</span></li>
+        <li><span class="feat-num">02</span><span class="feat-name" data-i18n="case.state.f2">danger à droite</span></li>
+        <li><span class="feat-num">03</span><span class="feat-name" data-i18n="case.state.f3">danger à gauche</span></li>
+        <li><span class="feat-num">04</span><span class="feat-name" data-i18n="case.state.f4">direction actuelle = gauche</span></li>
+        <li><span class="feat-num">05</span><span class="feat-name" data-i18n="case.state.f5">direction actuelle = droite</span></li>
+        <li><span class="feat-num">06</span><span class="feat-name" data-i18n="case.state.f6">direction actuelle = haut</span></li>
+        <li><span class="feat-num">07</span><span class="feat-name" data-i18n="case.state.f7">direction actuelle = bas</span></li>
+        <li><span class="feat-num">08</span><span class="feat-name" data-i18n="case.state.f8">pomme à gauche de la tête</span></li>
+        <li><span class="feat-num">09</span><span class="feat-name" data-i18n="case.state.f9">pomme à droite de la tête</span></li>
+        <li><span class="feat-num">10</span><span class="feat-name" data-i18n="case.state.f10">pomme au-dessus de la tête</span></li>
+        <li><span class="feat-num">11</span><span class="feat-name" data-i18n="case.state.f11">pomme en-dessous de la tête</span></li>
+      </ol>
+      <p class="case-text" data-i18n="case.state.note">Espace d'états total = 2¹¹ = 2048 combinaisons. La Q-table fait donc 2048 × 3 actions = 6144 valeurs à apprendre. Largement gérable.</p>
+      <pre class="case-code"><code><span class="c-com"># snake_env.py — méthode get_state()</span>
+<span class="c-kw">def</span> <span class="c-fn">get_state</span>(<span class="c-kw">self</span>):
+    head = <span class="c-kw">self</span>.snake[<span class="c-num">0</span>]
+    point_l = (head[<span class="c-num">0</span>] - <span class="c-num">1</span>, head[<span class="c-num">1</span>])
+    point_r = (head[<span class="c-num">0</span>] + <span class="c-num">1</span>, head[<span class="c-num">1</span>])
+    point_u = (head[<span class="c-num">0</span>], head[<span class="c-num">1</span>] - <span class="c-num">1</span>)
+    point_d = (head[<span class="c-num">0</span>], head[<span class="c-num">1</span>] + <span class="c-num">1</span>)
+
+    dir_l = <span class="c-kw">self</span>.direction == (-<span class="c-num">1</span>, <span class="c-num">0</span>)
+    dir_r = <span class="c-kw">self</span>.direction == (<span class="c-num">1</span>, <span class="c-num">0</span>)
+    dir_u = <span class="c-kw">self</span>.direction == (<span class="c-num">0</span>, -<span class="c-num">1</span>)
+    dir_d = <span class="c-kw">self</span>.direction == (<span class="c-num">0</span>, <span class="c-num">1</span>)
+
+    state = [
+        <span class="c-com"># danger devant / droite / gauche</span>
+        (dir_r <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_r)) <span class="c-kw">or</span>
+        (dir_l <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_l)) <span class="c-kw">or</span>
+        (dir_u <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_u)) <span class="c-kw">or</span>
+        (dir_d <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_d)),
+
+        (dir_u <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_r)) <span class="c-kw">or</span>
+        (dir_d <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_l)) <span class="c-kw">or</span>
+        (dir_l <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_u)) <span class="c-kw">or</span>
+        (dir_r <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_d)),
+
+        (dir_d <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_r)) <span class="c-kw">or</span>
+        (dir_u <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_l)) <span class="c-kw">or</span>
+        (dir_r <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_u)) <span class="c-kw">or</span>
+        (dir_l <span class="c-kw">and</span> <span class="c-kw">self</span>._is_collision(point_d)),
+
+        <span class="c-com"># direction actuelle</span>
+        dir_l, dir_r, dir_u, dir_d,
+
+        <span class="c-com"># position de la pomme relative à la tête</span>
+        <span class="c-kw">self</span>.food[<span class="c-num">0</span>] &lt; head[<span class="c-num">0</span>],
+        <span class="c-kw">self</span>.food[<span class="c-num">0</span>] &gt; head[<span class="c-num">0</span>],
+        <span class="c-kw">self</span>.food[<span class="c-num">1</span>] &lt; head[<span class="c-num">1</span>],
+        <span class="c-kw">self</span>.food[<span class="c-num">1</span>] &gt; head[<span class="c-num">1</span>],
+    ]
+    <span class="c-kw">return</span> tuple([int(x) <span class="c-kw">for</span> x <span class="c-kw">in</span> state])
+</code></pre>
+    </section>
+
+    <section class="section case-section" id="case-actions">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="case.actions.tag">// 03 — actions &amp; récompenses</span>
+        <h2 class="section-title" data-i18n="case.actions.title">Ce que l'agent décide, ce qu'il reçoit en retour</h2>
+      </div>
+      <div class="two-col">
+        <div>
+          <h3 class="sub-h" data-i18n="case.actions.act.title">3 actions possibles</h3>
+          <ul class="plain-list">
+            <li><code>[1, 0, 0]</code> — <span data-i18n="case.actions.act.a1">tout droit</span></li>
+            <li><code>[0, 1, 0]</code> — <span data-i18n="case.actions.act.a2">tourner à droite</span></li>
+            <li><code>[0, 0, 1]</code> — <span data-i18n="case.actions.act.a3">tourner à gauche</span></li>
+          </ul>
+          <p class="case-note" data-i18n="case.actions.act.note">Pas de "demi-tour" — ça mènerait directement à une collision avec son propre corps.</p>
+        </div>
+        <div>
+          <h3 class="sub-h" data-i18n="case.actions.rew.title">Récompenses</h3>
+          <ul class="plain-list">
+            <li><span class="r-good">+10</span> — <span data-i18n="case.actions.rew.r1">manger une pomme</span></li>
+            <li><span class="r-bad">-10</span> — <span data-i18n="case.actions.rew.r2">mourir (mur ou corps)</span></li>
+            <li><span class="r-good">+1</span> — <span data-i18n="case.actions.rew.r3">se rapprocher de la pomme</span></li>
+            <li><span class="r-bad">-1</span> — <span data-i18n="case.actions.rew.r4">s'éloigner de la pomme</span></li>
+          </ul>
+          <p class="case-note" data-i18n="case.actions.rew.note">La récompense de distance (±1) accélère l'apprentissage : l'agent reçoit un signal à chaque pas, pas seulement à la fin de l'épisode.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section case-section" id="case-algo">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="case.algo.tag">// 04 — algorithme</span>
+        <h2 class="section-title" data-i18n="case.algo.title">Q-Learning, l'équation au cœur de l'agent</h2>
+      </div>
+      <p class="case-text" data-i18n="case.algo.p1">À chaque pas, on met à jour la valeur Q(s,a) — l'estimation de la "qualité" de prendre l'action a dans l'état s — avec la règle de Bellman :</p>
+      <div class="equation">
+        <span>Q(s, a) ← Q(s, a) + α · [ r + γ · max Q(s', a') − Q(s, a) ]</span>
+      </div>
+      <ul class="plain-list">
+        <li><strong>α</strong> — <span data-i18n="case.algo.alpha">taux d'apprentissage (combien on croit la nouvelle info)</span></li>
+        <li><strong>γ</strong> — <span data-i18n="case.algo.gamma">facteur de discount (combien on valorise les récompenses futures)</span></li>
+        <li><strong>r</strong> — <span data-i18n="case.algo.r">récompense reçue après l'action</span></li>
+        <li><strong>s'</strong> — <span data-i18n="case.algo.sp">nouvel état après l'action</span></li>
+      </ul>
+      <p class="case-text" data-i18n="case.algo.p2">La sélection d'action suit une politique <strong>epsilon-greedy</strong> : avec probabilité ε on explore au hasard, sinon on exploite la meilleure action connue. ε décroît à chaque épisode pour passer d'un agent qui tâtonne à un agent qui sait.</p>
+      <pre class="case-code"><code><span class="c-com"># train_agent.py — méthode learn() (mise à jour Bellman)</span>
+<span class="c-kw">def</span> <span class="c-fn">learn</span>(<span class="c-kw">self</span>, state, action, reward, next_state, done):
+    <span class="c-kw">if</span> state <span class="c-kw">not</span> <span class="c-kw">in</span> <span class="c-kw">self</span>.q_table:
+        <span class="c-kw">self</span>.q_table[state] = [<span class="c-num">0</span>, <span class="c-num">0</span>, <span class="c-num">0</span>]
+    <span class="c-kw">if</span> next_state <span class="c-kw">not</span> <span class="c-kw">in</span> <span class="c-kw">self</span>.q_table:
+        <span class="c-kw">self</span>.q_table[next_state] = [<span class="c-num">0</span>, <span class="c-num">0</span>, <span class="c-num">0</span>]
+
+    old_value = <span class="c-kw">self</span>.q_table[state][action]
+    next_max = max(<span class="c-kw">self</span>.q_table[next_state]) <span class="c-kw">if</span> <span class="c-kw">not</span> done <span class="c-kw">else</span> <span class="c-num">0</span>
+    new_value = old_value + <span class="c-kw">self</span>.lr * (reward + <span class="c-kw">self</span>.gamma * next_max - old_value)
+    <span class="c-kw">self</span>.q_table[state][action] = new_value
+
+
+<span class="c-com"># boucle d'entraînement principale (extrait de train())</span>
+<span class="c-kw">for</span> episode <span class="c-kw">in</span> range(<span class="c-num">50000</span>):
+    state = env.reset()
+    steps = <span class="c-num">0</span>
+    <span class="c-kw">while</span> steps &lt; <span class="c-num">1000</span>:
+        action = agent.get_action(state)
+        next_state, reward, done = env.step(action)
+        agent.learn(state, action, reward, next_state, done)
+        state = next_state
+        steps += <span class="c-num">1</span>
+        <span class="c-kw">if</span> done: <span class="c-kw">break</span>
+    scores.append(env.score)
+    agent.decay_epsilon()
+</code></pre>
+    </section>
+
+    <section class="section case-section" id="case-hyper">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="case.hyper.tag">// 05 — hyperparamètres</span>
+        <h2 class="section-title" data-i18n="case.hyper.title">Réglages qui marchent</h2>
+        <p class="section-desc" data-i18n="case.hyper.desc">Trouvés en testant — pas d'optimisation Bayésienne, juste de l'intuition et des courbes regardées sur Matplotlib.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><span class="stat-val">0.1</span><span class="stat-key" data-i18n="case.hyper.alpha">α — learning rate</span></div>
+        <div class="stat"><span class="stat-val">0.9</span><span class="stat-key" data-i18n="case.hyper.gamma">γ — discount factor</span></div>
+        <div class="stat"><span class="stat-val">1.0 → 0.01</span><span class="stat-key" data-i18n="case.hyper.eps">ε — exploration</span></div>
+        <div class="stat"><span class="stat-val">0.995</span><span class="stat-key" data-i18n="case.hyper.decay">ε-decay par épisode</span></div>
+        <div class="stat"><span class="stat-val">50 000</span><span class="stat-key" data-i18n="case.hyper.episodes">épisodes d'entraînement</span></div>
+        <div class="stat"><span class="stat-val">20×20</span><span class="stat-key" data-i18n="case.hyper.grid">grille de jeu</span></div>
+      </div>
+    </section>
+
+    <section class="section case-section" id="case-results">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="case.results.tag">// 06 — résultats</span>
+        <h2 class="section-title" data-i18n="case.results.title">Ce que ça donne après 50 000 épisodes</h2>
+      </div>
+      <div class="stat-grid">
+        <div class="stat big"><span class="stat-val">65</span><span class="stat-key" data-i18n="case.results.best">meilleur score atteint</span></div>
+        <div class="stat big"><span class="stat-val">24.40</span><span class="stat-key" data-i18n="case.results.avg">moyenne sur 50 derniers épisodes</span></div>
+        <div class="stat big"><span class="stat-val">256</span><span class="stat-key" data-i18n="case.results.states">états explorés (taille Q-table)</span></div>
+      </div>
+      <figure class="chart-placeholder">
+        <img src="assets/img/training_results.png" alt="Progression du score sur 50 000 épisodes (gauche) et distribution des scores (droite)" loading="lazy">
+        <figcaption class="chart-label" data-i18n="case.results.chart">Progression du score (gauche) · distribution finale (droite) — 50 000 épisodes</figcaption>
+      </figure>
+      <p class="case-text" data-i18n="case.results.p1">L'agent décolle vite : dès les premiers milliers d'épisodes, la moyenne mobile (rouge) grimpe au-dessus de 20. Elle plafonne ensuite autour de <strong>24-26</strong> — la limite de ce qu'une Q-table tabulaire peut extraire d'un état aussi compact. Le meilleur run atteint un score de <strong>65</strong>. Insight intéressant : seulement <strong>256 états explorés</strong> sur les 2<sup>11</sup> = 2048 théoriques, parce qu'un seul bit de direction peut être actif à la fois — ce qui réduit drastiquement les combinaisons valides et explique la convergence rapide.</p>
+    </section>
+
+    <section class="section case-section" id="case-demo">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="case.demo.tag">// 07 — démo</span>
+        <h2 class="section-title" data-i18n="case.demo.title">L'agent en action</h2>
+      </div>
+      <div class="chart-placeholder big">
+        <span class="chart-label" data-i18n="case.demo.gif"></span></div>
+          <figure class="demo-video-wrap">
+            <video class="demo-video" src="assets/video/snake-agent.mp4" autoplay muted loop playsinline></video>
+            <figcaption class="demo-caption" data-i18n="case.demo.caption">Agent entraîné après 50 000 épisodes — vitesse réelle</figcaption>
+          </figure>
+          <div style="display:none"><span></span>
+      </div>
+    </section>
+
+    <section class="section case-section" id="case-learnings">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="case.learn.tag">// 08 — ce que j'ai appris</span>
+        <h2 class="section-title" data-i18n="case.learn.title">Ce qui m'a marqué</h2>
+      </div>
+      <ul class="plain-list big-list">
+        <li data-i18n="case.learn.l1">L'encoding d'état change tout. Passer de "grille brute" à "11 booléens" divise par mille le temps de convergence.</li>
+        <li data-i18n="case.learn.l2">Le decay d'epsilon doit être pensé selon le nombre d'épisodes. Trop rapide → l'agent fige une stratégie médiocre. Trop lent → il continue à explorer alors qu'il sait déjà jouer.</li>
+        <li data-i18n="case.learn.l3">Une récompense clairsemée (−10 / +10 / 0) marche mieux qu'une récompense dense "distance à la pomme". Le shaping naïf fait sur-optimiser le mauvais signal.</li>
+        <li data-i18n="case.learn.l4">Q-learning tabulaire suffit ici grâce au petit espace d'états. Pour un Snake sur grille 50×50 avec obstacles, il faudrait passer à un Deep Q-Network — prochaine étape du projet.</li>
+      </ul>
+    </section>
+
+    <section class="section case-section" id="case-cta">
+      <div class="contact-actions">
+        <a href="https://github.com/JeromeRigoni/snake-ia-rl" class="btn btn-primary" target="_blank" rel="noopener">
+          <span data-i18n="case.cta.repo">Voir le repo GitHub</span>
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="index.html" class="btn btn-ghost">
+          <span data-i18n="case.cta.back">← Retour au portfolio</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 Jérôme Rigoni</span>
+    <span class="footer-muted">snake.html · case study</span>
+  </footer>
+
+  <script src="assets/js/i18n.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
