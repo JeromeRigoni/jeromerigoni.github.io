@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vision Classifier — Démo · Jérôme Rigoni</title>
+  <meta name="description" content="Vision Classifier : classification d'images dans le navigateur avec TensorFlow.js et MobileNet v2. 100% client-side.">
+  <meta name="theme-color" content="#050505">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Vision Classifier — Démo">
+  <meta property="og:description" content="Classification d'images dans le navigateur · TensorFlow.js · MobileNet">
+  <meta property="og:url" content="https://jeromerigoni.github.io/vision.html">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#vc-top" data-i18n="a11y.skip">Aller au contenu principal</a>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a href="index.html" class="logo" data-i18n-aria-label="aria.home" aria-label="Accueil">
+      <span class="logo-bracket">[</span>JR<span class="logo-bracket">]</span>
+    </a>
+    <nav class="nav" data-i18n-aria-label="aria.nav" aria-label="Navigation principale">
+      <a href="index.html#projects" data-i18n="case.nav.back">// ← projets</a>
+      <a href="#vc-demo" data-i18n="vc.nav.demo">// démo</a>
+      <a href="#vc-how" data-i18n="vc.nav.how">// comment</a>
+      <a href="#vc-limits" data-i18n="vc.nav.limits">// limites</a>
+    </nav>
+    <button class="lang-toggle" type="button" data-i18n-aria-label="aria.lang" aria-label="Changer de langue">
+      <span class="lang-active">FR</span>
+      <span class="lang-sep">/</span>
+      <span class="lang-inactive">EN</span>
+    </button>
+  </header>
+
+  <main>
+
+    <section class="case-hero" id="vc-top">
+      <span class="section-tag" data-i18n="vc.tag">// démo — projet 02</span>
+      <h1 class="case-title">Vision Classifier</h1>
+      <p class="case-subtitle" data-i18n="vc.subtitle">Classification d'images dans le navigateur · TensorFlow.js · MobileNet v2</p>
+      <div class="case-meta">
+        <span><strong data-i18n="vc.meta.stack">Stack</strong> TensorFlow.js · MobileNet v2</span>
+        <span><strong data-i18n="vc.meta.where">Où</strong> 100% navigateur</span>
+        <span><strong data-i18n="vc.meta.model">Modèle</strong> ~14 Mo (téléchargé une fois)</span>
+      </div>
+    </section>
+
+    <section class="section case-section" id="vc-tldr">
+      <div class="tldr">
+        <span class="tldr-label" data-i18n="vc.tldr.label">TL;DR</span>
+        <p data-i18n-html="vc.tldr.text">Tu glisses une image, MobileNet v2 (CNN pré-entraîné sur 1.4M d'images ImageNet) tourne <strong>dans ton navigateur</strong> via WebGL, et te renvoie les 5 classes les plus probables avec leur score. Zéro upload, zéro serveur, zéro tracking.</p>
+      </div>
+    </section>
+
+    <section class="section case-section" id="vc-demo">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="vc.demo.tag">// 01 — démo</span>
+        <h2 class="section-title" data-i18n="vc.demo.title">Glisse une image</h2>
+        <p class="section-desc" data-i18n="vc.demo.desc">Photo, screenshot, illustration. Premier chargement plus lent (téléchargement du modèle), ensuite quasi-instantané.</p>
+      </div>
+
+      <div class="vc-app">
+
+        <label class="vc-dropzone" id="vc-dropzone" for="vc-file">
+          <span class="vc-icon" aria-hidden="true">[ + ]</span>
+          <p data-i18n="vc.drop.main">Glisse une image ici ou clique pour parcourir</p>
+          <p class="vc-hint" data-i18n="vc.drop.hint">PNG · JPG · WebP — analyse 100% locale</p>
+          <input type="file" id="vc-file" accept="image/*" hidden>
+        </label>
+
+        <div class="vc-status" id="vc-status" data-state="idle">
+          <span class="vc-status-text" data-i18n="vc.status.idle">[idle — en attente d'une image]</span>
+        </div>
+
+        <div class="vc-result" id="vc-result" hidden>
+          <figure class="vc-preview">
+            <img id="vc-img" alt="">
+            <figcaption class="vc-filename" id="vc-filename"></figcaption>
+          </figure>
+          <ol class="vc-predictions" id="vc-predictions"></ol>
+          <button class="vc-reset" id="vc-reset" type="button" data-i18n="vc.reset">[ analyser une autre image ]</button>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section case-section" id="vc-how">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="vc.how.tag">// 02 — comment ça marche</span>
+        <h2 class="section-title" data-i18n="vc.how.title">MobileNet v2, en 30 secondes</h2>
+      </div>
+      <p class="case-text" data-i18n-html="vc.how.p1">MobileNet est un CNN conçu par Google (2018) pour tourner efficacement sur mobile. Comparé à un VGG16 traditionnel (~138M paramètres), MobileNet v2 en a seulement <strong>~3.5M</strong>, grâce à des convolutions séparables en profondeur.</p>
+      <div class="two-col">
+        <div>
+          <h3 class="sub-h" data-i18n="vc.how.pipe.title">Pipeline d'inférence</h3>
+          <ol class="plain-list">
+            <li data-i18n="vc.how.pipe.s1">L'image est redimensionnée en 224×224</li>
+            <li data-i18n="vc.how.pipe.s2">Les pixels sont normalisés ([-1, 1])</li>
+            <li data-i18n="vc.how.pipe.s3">Forward pass dans le réseau (WebGL)</li>
+            <li data-i18n="vc.how.pipe.s4">Softmax → 1000 probabilités</li>
+            <li data-i18n="vc.how.pipe.s5">Top-5 sélectionné et affiché</li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="sub-h" data-i18n="vc.how.why.title">Pourquoi côté client ?</h3>
+          <ul class="plain-list">
+            <li data-i18n-html="vc.how.why.r1"><strong>Privacy</strong> — aucune image n'est uploadée</li>
+            <li data-i18n-html="vc.how.why.r2"><strong>Latence</strong> — pas de round-trip serveur</li>
+            <li data-i18n-html="vc.how.why.r3"><strong>Coût</strong> — 0€ d'infra à provisionner</li>
+            <li data-i18n-html="vc.how.why.r4"><strong>Offline-ready</strong> — marche après le premier chargement</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section case-section" id="vc-limits">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="vc.lim.tag">// 03 — limites</span>
+        <h2 class="section-title" data-i18n="vc.lim.title">Ce que ce modèle ne sait pas faire</h2>
+      </div>
+      <ul class="plain-list">
+        <li data-i18n-html="vc.lim.l1"><strong>Labels anglais uniquement</strong> — ImageNet n'est pas localisé</li>
+        <li data-i18n-html="vc.lim.l2"><strong>1000 classes seulement</strong> — et certaines très spécifiques (African vs Indian elephant)</li>
+        <li data-i18n-html="vc.lim.l3"><strong>Pas de détection multi-objet</strong> — répond « qu'est-ce que c'est ? », pas « où est quoi ? »</li>
+        <li data-i18n-html="vc.lim.l4"><strong>Souffre sur les images hors-distribution</strong> — sketches, captures d'écran, memes</li>
+        <li data-i18n-html="vc.lim.l5"><strong>Premier chargement ~14 Mo</strong> — le modèle est mis en cache ensuite</li>
+      </ul>
+      <p class="case-text" data-i18n-html="vc.lim.next">Pour aller plus loin : fine-tuner sur un dataset custom (Teachable Machine, ou transfer learning manuel), ou passer à un modèle de détection type COCO-SSD pour identifier <em>plusieurs</em> objets dans une même image.</p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 Jérôme Rigoni</span>
+    <span class="footer-muted">vision-classifier · v1.0</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
+  <script src="assets/js/i18n.js" defer></script>
+  <script src="assets/js/vision.js" defer></script>
+</body>
+</html>

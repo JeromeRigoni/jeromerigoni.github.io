@@ -888,3 +888,161 @@ body {
   text-align: center;
   padding-top: 0.85rem;
 }
+
+/* === Vision Classifier — Démo === */
+.vc-app {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 760px;
+}
+
+.vc-dropzone {
+  display: block;
+  border: 2px dashed var(--border);
+  background: var(--bg-2);
+  padding: 3rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.vc-dropzone:hover,
+.vc-dropzone.drag-over {
+  border-color: var(--cyan);
+  background: rgba(0, 229, 255, 0.04);
+}
+.vc-icon {
+  display: block;
+  font-family: var(--font-mono);
+  color: var(--cyan);
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.85rem;
+}
+.vc-dropzone p {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  margin: 0;
+}
+.vc-dropzone .vc-hint {
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-top: 0.5rem;
+}
+
+.vc-status {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 0.9rem 1.15rem;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: var(--muted);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.vc-status[data-state="loading"],
+.vc-status[data-state="analyzing"] {
+  color: var(--cyan);
+  border-color: var(--cyan-dark);
+}
+.vc-status[data-state="ready"],
+.vc-status[data-state="done"] {
+  color: var(--cyan);
+  border-color: var(--cyan-dark);
+}
+.vc-status[data-state="error"] {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.vc-result {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.vc-preview {
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  padding: 0.75rem;
+  margin: 0;
+}
+.vc-preview img {
+  display: block;
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  background: #000;
+}
+.vc-filename {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding-top: 0.6rem;
+  word-break: break-all;
+}
+
+.vc-predictions {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+}
+.vc-pred {
+  display: grid;
+  grid-template-columns: 32px 1fr 2fr 60px;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1.1rem;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  transition: border-color 0.2s ease;
+}
+.vc-pred:hover { border-color: var(--cyan-dark); }
+.vc-pred-rank { color: var(--cyan-dark); }
+.vc-pred-label { color: var(--text); word-break: break-word; }
+.vc-pred-bar {
+  height: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.vc-pred-bar span {
+  display: block;
+  height: 100%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.45);
+  transition: width 0.3s ease;
+}
+.vc-pred-pct {
+  color: var(--cyan);
+  text-align: right;
+}
+
+.vc-reset {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.vc-reset:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+@media (max-width: 700px) {
+  .vc-pred {
+    grid-template-columns: 28px 1fr 56px;
+    gap: 0.6rem;
+  }
+  .vc-pred-bar { display: none; }
+}
