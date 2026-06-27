@@ -40,7 +40,7 @@
       "journey.type.alternance": "alternance",
       "journey.type.stage": "stage",
       "journey.esgi.year": "2024 — en cours",
-      "journey.esgi.role": 'Bachelor Informatique — spécialisation IA &amp; Data',
+      "journey.esgi.role": 'Bachelor Informatique — spécialisation IA & Data',
       "journey.esgi.place": "Paris · Promo 2027",
       "journey.esgi.desc": "Spécialisation orientée machine learning, data engineering et statistiques. Projets autour de l'IA appliquée.",
       "journey.coyali.role": "Développeur mobile — alternance",
